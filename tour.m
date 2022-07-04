@@ -1,14 +1,7 @@
 function out=tour(img,vanishing_point,vanishing_point_after,min_y,max_y,min_x,max_x)
-    image_name="sagrada_familia.png"
-    img=imread(image_name);
     [m,n,p]=size(img);
     x_max = n;
     y_max = m;
-    vanishing_point=[1000,1500]';
-    vanishing_point_after=[700,1200]';
-
-    min_y=800;max_y=1200;
-    min_x=1300;max_x=1700;
 
     x_vp=vanishing_point(2);
     y_vp=vanishing_point(1);
