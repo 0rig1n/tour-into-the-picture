@@ -25,10 +25,10 @@ for i=[1:5]
     [outputImage,p1] = imwarp(layers{i},p0, trans{i} );
     shift_x=-p1.XWorldLimits(1)+0.5;
     shift_y=-p1.YWorldLimits(1)+0.5;
-    ix=selected_region{i}(1);iy=selected_region{i}(2);ax=selected_region{i}(3);ay=selected_region{i}(4);
+    iy=selected_region{i}(1);ix=selected_region{i}(2);ay=selected_region{i}(3);ax=selected_region{i}(4);
     shift_x=-p1.XWorldLimits(1)-0.5;
     shift_y=-p1.YWorldLimits(1)-0.5;
-    out(iy:ay,ix:ax,:)=out(iy:ay,ix:ax,:)+outputImage(ceil(iy+shift_y)+1:ceil(ay+shift_y)+1,1+ceil(ix+shift_x):1+ceil(ax+shift_x),:);
+    out(iy:ay,ix:ax,:)=out(ix:ax,iy:ay,:)+outputImage(ceil(ix+shift_x):ceil(ax+shift_x),ceil(iy+shift_y):ceil(ay+shift_y),:);
 end
 
 
