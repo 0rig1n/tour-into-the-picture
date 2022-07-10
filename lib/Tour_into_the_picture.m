@@ -1,14 +1,16 @@
-addpath(genpath('./')); 
-image_name="./img/sagrada_familia.png"
-img=imread(image_name);
+function out=Tour_into_the_picture(img,vanishing_point,box,geo)
+%img image under invest
+%vanishing_point(y,x)
+%box [min_y,max_y,min_x,max_x]
+%geo: geometric transformation parameter :[mx,my,mz,rx,ry,rz];
 [m,n,p]=size(img);
 x_max = n;
 y_max = m;
-vanishing_point=[1000,1500]';
-vanishing_point_after=[700,1200]';
 
-min_y=800;max_y=1200;
-min_x=1300;max_x=1700;
+mx=geo(1);my=geo(2);mz=geo(3);rx=geo(4);ry=geo(5);rz=geo(6);
+
+min_y=box(1);max_y=box(2);
+min_x=box(3);max_x=box(4);
 %1250  1850 1650 750
 x_vp=vanishing_point(2);
 y_vp=vanishing_point(1);
@@ -39,26 +41,18 @@ estimatedVertex(:,9) = [(0-y_vp)/gradient(4) + x_vp; 1];
 estimatedVertex(:,11) = [0; (1-x_vp)*gradient(4) + y_vp];
 
 recVertex=reconst3d(vanishing_point,estimatedVertex);
-mx=0;my=0;mz=0;rx=20;ry=10;rz=0;
+
 M=[rotx(rx)*roty(ry)*rotz(rz),[mx,my,mz]';zeros(1,3),1];
 recVertex([1,2],:)=recVertex([1,2],:)/1500;
 transVertex=transform(recVertex,M);
 recVertex([1,2],:)=recVertex([1,2],:)*1500;
 transVertex([1,2],:)=transVertex([1,2],:)*1500;
-pixel=toimgcoordinate(transVertex)
-origin=toimgcoordinate(recVertex)
-
-subplot(2,1,1)
-scatter(pixel(1,:),pixel(2,:))
-subplot(2,1,2)
-scatter(origin(1,:),origin(2,:))
+pixel=ceil(toimgcoordinate(transVertex));
+origin=ceil(toimgcoordinate(recVertex));
 %out=rendering(i,origin,pixel)
-[out,estimatedVertex_after]=padding(img,origin,estimatedVertex)
+[img,estimatedVertex]=padding(img,origin,estimatedVertex);
 layers=segmentation(img,estimatedVertex);
-out=rendering(layers,origin,pixel,vanishing_point)
-for i=[1:5]
-    subplot(5,1,i);
-    imshow(layers{i})
-    hold on
+out=rendering(layers,origin,pixel,vanishing_point);
+
+
 end
-scatter(ReferenceVertex(1,:),ReferenceVertex(2,:))
