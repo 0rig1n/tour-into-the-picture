@@ -10,8 +10,4 @@ box=[min_y,max_y,min_x,max_x];
 geo=[mx,my,mz,rx,ry,rz];
 vanishing_point=[1000,1500]';
 
-out=Tour_into_the_picture(img,vanishing_point,box,geo);
-subplot(2,1,1)
-imshow(img)
-subplot(2,1,2)
-imshow(out)
+out=Tour_into_the_3d_picture(img,vanishing_point,box);

@@ -19,7 +19,7 @@ estimatedVertex=ceil(1+origin'-shift_origin);estimatedVertex=estimatedVertex';
 ReferenceVertex=ceil(1+pixel'-shift_after);ReferenceVertex=ReferenceVertex';
 [trans,selected_region]=get_trans_and_region(estimatedVertex,ReferenceVertex);
 out=uint8(zeros(ceil(size_after(2)),ceil(size_after(1)),3));
-p0=imref2d(size(layers{1}));
+p0=imref2d(size(img(:,1:1229,:)));
 
 for i=[1:5]
     [outputImage,p1] = imwarp(layers{i},p0, trans{i} );
