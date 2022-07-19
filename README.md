@@ -2,14 +2,10 @@
 
 ## Demo
 https://user-images.githubusercontent.com/22386378/179718381-8ae9da2a-47e9-4f87-b901-11a22ccf388a.mp4
-## Environment
-
-Matlab
-
-This project realizes 3D reconstruction of a picture, and can extract foreground objects separately, and use the camera toolbar to control the view
-This project is basically the extended, updated and runnable version of (https://github.com/0rig1n/tour-into-the-picture)
-The inpaint module credts to (https://github.com/)
-
+## Introduction
+* This project has made a program, which reconstruct the 3D information on a single 2D picture with simple annotation by user and later visualize it as a tour into the picture. The technique is described in [Tour Into the Picture](http://graphics.cs.cmu.edu/courses/15-463/2011_fall/Papers/TIP.pdf) by Horry et al.
+* This project realizes 3D reconstruction of a picture,by vanishing point and bottom surface specify by user, it can also extract foreground objects separately
+* use the camera toolbar to control the view
 
 ## Quick start
 
@@ -22,8 +18,5 @@ Please run `main.m` with the following step:
 > 5. Click Start, you will see the 3d reconstructed picture, then use the camera toolbar to control the view
 > 6. Click Reset, repeat step 1-5
 > 7. Click Quit, close the program
-
-
-
 
 Thank you for reading. Enjoy using it!
