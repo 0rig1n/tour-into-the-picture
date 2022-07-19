@@ -48,14 +48,15 @@ A[Demarcate 3d picture] -->B(Foreground object?)
 ## Algorithm
 ### Reconstruct 3D coordinate
 Assume the vertical distance of one point on image to view plane equal to N pixels, then the 3D coordinate of every point on this image can be derived with the following mechanism:
-![图片3](https://user-images.githubusercontent.com/22386378/179747741-5ad53f8f-a1b7-4943-9daf-a0f0baee5175.png)
+
 
 
 ### Homogeneous transformation
 Now every point on image has its 3d coordinate, By changing the view, all the movement of the point can be dirived by Euclidian motion.
 * The movement of the camera is described by a coordinate change of a fix point in space. It can be expressed by Euclidian motion.
 * Euclidian motion by change in homogeneous coordinates:
-![图片5](https://user-images.githubusercontent.com/22386378/179748375-33276157-9c97-43fd-8a4f-215532bd64b5.png)
+
+![图片2](https://user-images.githubusercontent.com/22386378/179795888-f3afb3fb-0f70-4aa6-b0b4-336de11155e6.png)
 
 
 
