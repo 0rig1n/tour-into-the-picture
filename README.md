@@ -1,8 +1,8 @@
 # Tour-Into-The-Picture
 
 ## Demo
-https://user-images.githubusercontent.com/22386378/179718381-8ae9da2a-47e9-4f87-b901-11a22ccf388a.mp4
 
+https://user-images.githubusercontent.com/22386378/179780179-8f1c8389-f0b4-4ff0-9c4b-25f6dabf7ce4.mp4
 
 ## Introduction
 * This project has made a program, which reconstruct the 3D information on a single 2D picture with simple annotation by user and later visualize it as a tour into the picture. The technique is described in [Tour Into the Picture](http://graphics.cs.cmu.edu/courses/15-463/2011_fall/Papers/TIP.pdf) by Horry et al.
