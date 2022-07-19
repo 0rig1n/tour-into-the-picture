@@ -62,13 +62,32 @@ global max_y
 global max_x
 global min_y
 global min_x
-set(hObject,'toolbar','figure') %显示工具栏
+global x_max
+global y_max
+global vanishing_point
+global m
+global n
+global p
+global min_y_fore
+global max_y_fore
+global min_x_fore
+global max_x_fore
+global poss1
+global poss2
+global poss3
+global poss4
+global estimatedVertex
+set(hObject,'toolbar','figure') %Show Toolbar
+cameratoolbar('NoReset')%Show camera toolbar without presets
 global img
+global test
+global FGVertex
+global outFG
+global foreobj
+global pic_num
+global foreground
+global background
 % Update handles structure
-handles.minx =0;
-handles.miny =0;
-handles.maxx =0;
-handles.maxy =0;
 guidata(hObject, handles);
 
 % UIWAIT makes GUIDECV wait for user response (see UIRESUME)
@@ -81,13 +100,15 @@ function varargout = GUIDECV_OutputFcn(hObject, eventdata, handles)
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-set(handles.axes3,'visible','off'); 
-ax2=axes('units','normalized','pos',[0.7 0.7 0.3 0.3]); % axes 创建坐标区
-uistack(ax2,'top');  % 对 UI 组件的视图层叠重新排序
-ii=imread('2.png');
+set(handles.axes3,'visible','off'); % hide the axes
+ax2=axes('units','normalized','pos',[0.75 0.75 0.25 0.25]); % Create axes
+uistack(ax2,'top');  %Reorder the view cascade for UI components
+addpath(genpath('./')); 
+image_name="./img/tum_logo.png";
+ii=imread(image_name);%Add tumlogo
 image(ii);
-colormap gray  %查看并设置当前颜色图
-set(ax2,'handlevisibility','off','visible','off');
+colormap gray %View and set the current colormap
+set(ax2,'handlevisibility','off','visible','off');% hide the axes
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
@@ -101,7 +122,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 axes(handles.axes3);
 [filename,pathname]=uigetfile({'*.bmp;*.jpg;*.png;*.jpeg;*.tif'},'select a picture');
 str=[pathname filename];
-% 判断文件是否为空，也可以不用这个操作！直接读入图片也可以的
+% Check if the file is empty
 global img
 img = imread(str);
 % imshow(im)
@@ -136,9 +157,10 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.axes3); %指定需要清空的坐标
+axes(handles.axes3); %Specify the coordinates that need to be cleared
 cla reset;
 set(handles.axes3,'visible','off'); 
+
 
 
 % --- Executes on button press in pushbutton4.
@@ -146,32 +168,14 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-%获取之前的坐标轴设置
-axes3 = gca;%获取当前的坐标轴
-%xlim = get(axes3, 'xlim');
-%ylim = get(axes3, 'ylim');
-%这里需要显示操作后的图像，例如imshow(img)
-%set(axes3, 'xlim', xlim);%恢复之前的坐标轴设置
-%set(axes3, 'ylim', ylim);
-%k=waitforbuttonpress;%等待鼠标按下
-       %point1=get(gca,'Currentpoint');%鼠标按下了
-       %finalRect = rbbox; %
-      % point2=get(gca,'Currentpoint');%鼠标松开了
-       %point1=point1(1,1:2);%提取出两个点
-       %point2=point2(1,1:2);
-       %p1=min(floor(point1),floor(point2));%计算位置
-       %p2=max(floor(point1),floor(point2));
-       %offset=abs(floor(point1)-floor(point2));% offset(1)表示宽，offset(2)表示高
-       %x = [p1(1) p1(1)+offset(1) p1(1)+offset(1) p1(1) p1(1)];
-      % y = [p1(2) p1(2) p1(2)+offset(2) p1(2)+offset(2) p1(2)];
-    
 
-   h=imrect;%鼠标变成十字，用来选取感兴趣区域
+axes3 = gca;%Get the current axis
+h=imrect;%The mouse turns into a cross to select the region of interest
 
 
-%图中就会出现可以拖动以及改变大小的矩形框，选好位置后：
+%There will be a rectangular box that can be dragged and resized
 
-pos=getPosition(h);%pos有四个值，分别是矩形框的左上角点的坐标 x y 和 框的 宽度和高度[0,0,0,0],
+pos=getPosition(h);%pos has four values锛宎re the coordinates of the upper left corner of the rectangular box x y and the width and height of the box
 hold on
 global pos1
 global pos2
@@ -193,23 +197,8 @@ global min_x
  max_y=pos(2)+pos(4);
  min_x=pos(1);
  max_x=pos(1)+pos(3);
- min_y=floor(min_y)
- min_x=floor(min_x)
- max_y=floor(max_y)
- max_x=floor(max_x)
-handles.minx=min_x;
-handles.miny=min_y;
-handles.maxx=max_x;
-handles.maxy=max_y;
 
 
-
-
-
-%global min_y
-%global min_x
-%global max_y
-%global max_x
  
 
 % --- Executes on button press in pushbutton5.
@@ -217,42 +206,41 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
- %h=imrect;%鼠标变成十字，用来选取感兴趣区域
+ 
 [x,y] = ginput(1);
 
 hold on
 a=min(x);
-b=min(y);%获取鼠标点击的1个点的像素坐标，x保存横坐标向量，y保存纵坐标向量
+b=min(y);%Get the pixel coordinates of a point clicked by the mouse, x saves the abscissa vector, y saves the ordinate vector
 a=floor(a)
 b=floor(b)
 T=[a,b]
-plot(a,b,'bo')
+global vanishing_point
+global estimatedVertex
+vanishing_point=[b,a];
+% plot(a,b,'bo')
 global pos1
 global pos2
 global pos3
 global pos4
-%line(T,pos1,'Color','red','LineStyle','--');
-%line(T,pos2,'Color','red','LineStyle','--');
-%line(T,pos3,'Color','red','LineStyle','--');
-%line(T,pos4,'Color','red','LineStyle','--');
 
 global max_y
 global max_x
 global min_y
 global min_x
 
-%min_x= handles.minx;
-%min_y= handles.miny;
-%max_x= handles.maxx;
-%max_y= handles.maxy;
 global img
+global x_max
+global y_max
+global m
+global n
+global p
+global pic_num
+global foreground
  [m,n,p]=size(img)
     x_max = n
     y_max = m
 
-
-    %image_name="sagrada_familia.png"
-   % img=imread(image_name);
    x_vp = a;
    y_vp = b;
 
@@ -292,23 +280,200 @@ end
  plot([estimatedVertex(1,9),estimatedVertex(1,10)],[estimatedVertex(2,9),estimatedVertex(2,10)],'r-','lineWidth',3)
  plot([estimatedVertex(1,6),estimatedVertex(1,12)],[estimatedVertex(2,6),estimatedVertex(2,12)],'r-','lineWidth',3)
  plot([estimatedVertex(1,3),estimatedVertex(1,4)],[estimatedVertex(2,3),estimatedVertex(2,4)],'r-','lineWidth',3)
-
  
-
+ pic_num=ceil(max(size(img(:,:)))/5);
+ foreground = {};
   
-
-  
-
-  
-
 
    
 
-  
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global img
+global x_max
+global y_max
+global max_y
+global max_x
+global min_y
+global min_x
+global m
+global n
+global p
+global vanishing_point
+global FGVertex
+global outFG
+global foreobj
+global test
+global foreground
+global background
+global pic_num
+hold off
+x_max=floor(x_max);
+y_max=floor(y_max);
+max_y=floor(max_y);
+max_x=floor(max_x);
+min_y=floor(min_y);
+min_x=floor(min_x);
+vanishing_point=floor(vanishing_point);
+box=[min_y,max_y,min_x,max_x];
+mx=0;my=0;mz=0;rx=0;ry=0;rz=0;
+geo=[mx,my,mz,rx,ry,rz];
+
+ [out,test]=Tour_into_the_3d_picture(img,vanishing_point,box);
+ f = figure;
+ surface_3d(out)
+ hold on
+ if numel(foreground) ~= 0
+       [X,Y,Z,C,outputAlpha] = surfaceFG_3d(foreground,out,FGVertex,foreobj,test,pic_num);
+        h = surface(X,Y,Z,C);
+        set(h,'LineStyle','none');
+        h.AlphaData = outputAlpha;
+        h.FaceAlpha = 'flat';
+ end
+  cameratoolbar('NoReset')
+ tb = cameratoolbar(f);
+ view(0,-80)
+ setCamera(out)
+ axis off
+
+ 
  
 
 
-  
+% --- Executes on slider movement.
+function slider1_Callback(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function slider1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function slider2_Callback(hObject, eventdata, handles)
+% hObject    handle to slider2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function slider2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on slider movement.
+function slider3_Callback(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+
+% --- Executes during object creation, after setting all properties.
+function slider3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in pushbutton8.
+function pushbutton8_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton8 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+  h=imrect;
+
+
+
+global img
+poss=getPosition(h);
+hold on
+global poss1
+global poss2
+global poss3
+global poss4
+poss1=[poss(1),poss(2)]
+%pos1=[pos(2),pos(1)]
+poss2=[poss(1)+poss(3),poss(2)]
+%pos2=[pos(2)+pos(4),pos(1)]
+poss3=[poss(1)+poss(3),poss(2)+poss(4)]
+%pos3=[pos(2),pos(1)+pos(3)]
+poss4=[poss(1),poss(2)+poss(4)]
+%pos4=[pos(2)+pos(4),pos(1)+pos(3)]
+global vanishing_point
+global min_y_fore
+global max_y_fore
+global min_x_fore
+global max_x_fore
+global estimatedVertex
+global FGVertex
+global outFG
+global foreobj
+global test
+global foreground
+global background
+min_y_fore=poss(2);
+max_y_fore=poss(2)+poss(4);
+min_x_fore=poss(1);
+max_x_fore=poss(1)+poss(3);
+[foreground, img]= maskBackground(img, min_y_fore,max_y_fore,min_x_fore,max_x_fore);
+[FGVertex,foreobj]  = foregroundobj(foreground,vanishing_point,estimatedVertex,min_y_fore,max_y_fore,min_x_fore,max_x_fore);
+
   
 
-   
+
+
+function edit1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit1 as text
+%        str2double(get(hObject,'String')) returns contents of edit1 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

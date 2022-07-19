@@ -1,11 +1,11 @@
-function out=Tour_into_the_3d_picture(img,vanishing_point,box)
+function [out,test] =Tour_into_the_3d_picture(img,vanishing_point,box)
 %img image under invest
 %vanishing_point(y,x)
 %box [min_y,max_y,min_x,max_x]
 %geo: geometric transformation parameter :[mx,my,mz,rx,ry,rz];
 
 %pic_num: pixel quantities of f
-pic_num=1500;
+pic_num=ceil(max(size(img(:,:)))/5);
 [m,n,p]=size(img);
 x_max = n;
 y_max = m;
@@ -46,7 +46,7 @@ estimatedVertex(:,11) = [1; (1-x_vp)*gradient(4) + y_vp];
 recVertex=reconst3d(vanishing_point,estimatedVertex);
 recVertex(3,:)=recVertex(3,:)*pic_num;
 
-out=name(estimatedVertex,recVertex,img);
+[out,test] =name(estimatedVertex,recVertex,img);
 %out=to_3d_point(img,vanishing_point,recVertex);
-surface_3d(out)
+% surface_3d(out);
 end
